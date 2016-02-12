@@ -282,14 +282,14 @@ $c = curl_init();
 $var=$_POST['mobile'];
 $var1=$_POST['name'];
 $var2=$_POST['email'];
-$var3=$_POST['sub_category_selected'];
+$var3=$_POST['address'];
 
 
 curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($c, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($c, CURLOPT_URL, "http://0.0.0.0:3000/user_data/");
 curl_setopt($c, CURLOPT_POST, true);
-curl_setopt($c, CURLOPT_POSTFIELDS, 'phone='.$var.'&name='.$var1.'&email='.$var2.'&sub_category='.$var3);
+curl_setopt($c, CURLOPT_POSTFIELDS, 'phone='.$var.'&name='.$var1.'&email='.$var2.'&address='.$var3);
 $result = curl_exec($c);
 curl_close ($c);
 
@@ -343,20 +343,27 @@ ob_start(); //Turning ON Output Buffering
     <div class="container">
 
     <h4 style="text-align:center;font-family: Lato-Regular;"><?php echo $arr1[0]['name']; ?></h4>
-    <h6 style="text-align:center;color:#1DAE91;font-family: Lato-Regular;"><?php echo $arr1[0]['description']; ?></h6>
-  
+    
         <!-- /.row -->
 
         <!-- Projects Row -->
-        <div class="row" style="margin-top:-3%">
+        <div class="row" style="margin-top:0%">
 
-<br><br>  
+<br>
 
-
-
-                      <form method="post" action="" style="margin-top:-2%">
+          <?php if($ret == ''){ ?>            
+                  
+                      <form method="post" action="" style="margin-top:-9%">
                           <select name="service_selected" style="width:372px;background-color:transparent;border:transparent;border:solid 1px #E8E8E8 ;font-family: Lato-Light;font-weight: normal;margin-top:8%;">
-                         <!--    <option value="">Select Your Service</option> -->
+                          
+             <?php
+      if($arr1 == '') {?>
+          <option value="">Select Your Service</option>
+
+        <?php }else{?>
+          <option value="">Select Another Service</option>
+          <?php } ?>
+     
                             <?php 
                               for ($x = 0; $x <= count($arr); $x++) { ?>
                                   <option value=<?php echo $arr[$x]['id'] ?> ><?php echo $arr[$x]['service'] ?></option>
@@ -368,8 +375,7 @@ ob_start(); //Turning ON Output Buffering
                             <input type="submit" class="btn btn-warning" value="Select Sub Category">
                             
                         </form>
-
-                        <br><br>
+         <?php }?>
                         <br><br>
 
                         <?php
@@ -377,11 +383,11 @@ ob_start(); //Turning ON Output Buffering
 
                           <div >
                           
-                          <img align="right" style="width:20%;height:20%;margin-top:-18%;" src="<?php echo $arr1[0]['image']; ?>"/>
+                          <img align="right" style="width:50%;height:50%;margin-top:-9%;" src="<?php echo $arr1[0]['image']; ?>"/>
                           </div>
 
                          <form method="post" action="" style="margin-top:-2%">
-                         <select multiple="multiple" name="sub_category_selected[]" style="overflow: auto;height:400px;width:700px;background-color:transparent;border:transparent;border:solid 1px #E8E8E8 ;font-family: Lato-Light;font-weight: normal;">
+                         <select multiple="multiple" name="sub_category_selected[]" style="overflow: auto;height:350px;width:500px;background-color:transparent;border:transparent;border:solid 1px #E8E8E8 ;font-family: Lato-Light;font-weight: normal;">
         <!--                   <option style="color:black;font-family: Lato-Regular;font-weight:bold;font-size:15px" value="">Select Your Sub Category</option> -->        
                           <?php  
                               for ($x1 = 0; $x1 < count($arr1[0]['category']); $x1++) {?>
@@ -404,7 +410,7 @@ for ($x2 = 0; $x2 < count($arr1[0]['category'][$x1]['sub_category_details']); $x
                         
 
                              <br><br>
-                           <input type="submit" class="btn btn-warning" value="Proceed to Payment">
+                           <input type="submit" class="btn btn-warning" value="Confirm">
                          <!--  <input type="submit" class="btn btn-warning" value="Submit"> -->
                           </form>
 
@@ -412,28 +418,104 @@ for ($x2 = 0; $x2 < count($arr1[0]['category'][$x1]['sub_category_details']); $x
 
 
 
+<?php if($_POST['sub_category_selected']){
+$total=0;  ?>
  
 <table>
   <tr>
     <th>Service</th>
     <th>Category</th>
     <th>Sub Category</th>
-    <th>Description</th> 
     <th>Price</th>
   </tr>
 <?php if($ret != ''){
-  for ($x3 = 0; $x3 < count($array4); $x3++) { ?> 
+  for ($x3 = 0; $x3 < count($array4); $x3++) { 
+  $total+=$array4[$x3][0]['price'];?> 
   <tr>
     <td><?php echo $array4[$x3][0]['service']?></td>
     <td><?php echo $array4[$x3][0]['category']?></td> 
     <td><?php echo $array4[$x3][0]['name']?></td>
-    <td><?php echo $array4[$x3][0]['description']?></td>
-    <td><?php echo $array4[$x3][0]['price']?></td>
+    <!-- <td><?php echo $array4[$x3][0]['description']?></td> -->
+    <td><?php echo"Rs.";echo $array4[$x3][0]['price'];echo "/-"?></td>
+    </tr>
+  <tr>
+  </tr>
+  <tr>
+  </tr>
+  <tr>
   </tr>
 <?php }}?>
+
+
+  <tr>
+    <th>Tax</th>
+    <th></th>
+    <th></th>
+    <th>Rs.20/-</th>
+  </tr>
+    <th>Other Charges</th>
+    <th></th>
+    <th></th>
+    <th>Rs.8/-</th>
+  <tr>
+  </tr>
+    <th>Grand Total</th>
+    <th></th>
+    <th></th>
+    <th><?php echo"Rs.";echo $total;echo "/-"?></th>
+  <tr>
+  </tr>
 </table>
 
 
+
+   <div class="col-md-3 portfolio-item" style="width:20%;height:30%">
+                                  
+                        <form method="post" action="" style="margin-top:4%">
+
+                          <input type="text" name="name" placeholder="Your Name">
+
+                          <br><br>
+                         
+<input type="text" name="mobile" pattern="[0-9]{12}" title="Phone number starting with country code and 12 digits" placeholder="Mobile No.">
+                          <br><br>
+
+                          <input type="text" name="email" placeholder="Email">
+                          <br><br>
+
+                          <input type="text" name="address" placeholder="Address">
+                          <br><br>
+<?php /*if($ret != ''){
+  $details=[];
+  for ($x3 = 0; $x3 < count($array4); $x3++) { 
+    $details['service'][$x3]=
+  echo $array4[$x3][0]['service'];
+  echo $array4[$x3][0]['category'];
+   echo $array4[$x3][0]['name'];
+   echo $array4[$x3][0]['description'];
+ 
+}}*/?>
+                          <!-- <input type="text" name="details" value="<?php echo $ret ?>" placeholder="Details">
+                          <br><br>
+ -->
+                          
+
+                          
+
+                          <!-- <select name="mydropdown" style="width:172px;background-color:transparent;border:transparent;border:solid 1px #E8E8E8 ;font-family: Lato-Light;font-weight: normal;">
+                            <option value="">Select Sub Category</option>
+                            <option value="bangalore">Bangalore</option>
+                            <option value="mumbai">Mumbai</option>
+                            </select>
+                            <br><br> -->
+
+
+                           <input type="submit" class="btn btn-warning" value="Send SMS">
+                        </form>
+                                    </div>
+<?php }?>
+<h6 style="margin-top:-4%;margin-left:45%;align:right;text-align:right;color:#1DAE91;font-family: Lato-Regular;"><?php echo $arr1[0]['description']; ?></h6>
+  
 
 <!-- 
 
