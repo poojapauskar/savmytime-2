@@ -290,10 +290,17 @@ curl_setopt($c, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($c, CURLOPT_URL, "http://0.0.0.0:3000/user_data/");
 curl_setopt($c, CURLOPT_POST, true);
 curl_setopt($c, CURLOPT_POSTFIELDS, 'phone='.$var.'&name='.$var1.'&email='.$var2.'&address='.$var3);
-$result = curl_exec($c);
+$result8 = curl_exec($c);
+$arr9 = json_decode($result8,true);
+/*echo $arr9['phone'];
+echo $result8;*/
+/*if($result8 != ''){
+  header('Location: http://localhost/savmytime/authorize-php-examples/sim.php');
+}*/
 curl_close ($c);
 
 
+/*echo $result;*/
 
 
 
@@ -342,6 +349,7 @@ ob_start(); //Turning ON Output Buffering
   <!-- Page Content -->
     <div class="container">
 
+
     <h4 style="text-align:center;font-family: Lato-Regular;"><?php echo $arr1[0]['name']; ?></h4>
     
         <!-- /.row -->
@@ -351,7 +359,7 @@ ob_start(); //Turning ON Output Buffering
 
 <br>
 
-          <?php if($ret == ''){ ?>            
+          <?php if($ret == ''){ if($arr9['phone'] == ''){?>            
                   
                       <form method="post" action="" style="margin-top:-9%">
                           <select name="service_selected" style="width:372px;background-color:transparent;border:transparent;border:solid 1px #E8E8E8 ;font-family: Lato-Light;font-weight: normal;margin-top:8%;">
@@ -375,7 +383,7 @@ ob_start(); //Turning ON Output Buffering
                             <input type="submit" class="btn btn-warning" value="Select Sub Category">
                             
                         </form>
-         <?php }?>
+         <?php }}?>
                         <br><br>
 
                         <?php
@@ -469,7 +477,7 @@ $total=0;  ?>
 
 
 
-   <div class="col-md-3 portfolio-item" style="width:20%;height:30%">
+   <div class="col-md-3 portfolio-item" style="margin-left:60%;margin-top:-20%;width:20%;height:30%">
                                   
                         <form method="post" action="" style="margin-top:4%">
 
@@ -477,7 +485,7 @@ $total=0;  ?>
 
                           <br><br>
                          
-<input type="text" name="mobile" pattern="[0-9]{12}" title="Phone number starting with country code and 12 digits" placeholder="Mobile No.">
+<input type="text" name="mobile" pattern="[0-9]{12}" title="Phone number starting with country code and 12 digits" placeholder="Mobile No." required="True">
                           <br><br>
 
                           <input type="text" name="email" placeholder="Email">
@@ -486,18 +494,16 @@ $total=0;  ?>
                           <input type="text" name="address" placeholder="Address">
                           <br><br>
 <?php /*if($ret != ''){
-  $details=[];
+  $details5=[];
   for ($x3 = 0; $x3 < count($array4); $x3++) { 
-    $details['service'][$x3]=
-  echo $array4[$x3][0]['service'];
-  echo $array4[$x3][0]['category'];
-   echo $array4[$x3][0]['name'];
-   echo $array4[$x3][0]['description'];
- 
+    $details5['service'][$x3]=$array4[$x3][0]['service'];
+    $details5['category'][$x3]=$array4[$x3][0]['category'];
+    $details5['sub_category'][$x3]=$array4[$x3][0]['name'];
+  echo json_encode($details5);
 }}*/?>
-                          <!-- <input type="text" name="details" value="<?php echo $ret ?>" placeholder="Details">
-                          <br><br>
- -->
+                         <!-- <input type="text" name="details" value="<?php echo $details5 ?>" placeholder="Details">
+                          <br><br> -->
+ 
                           
 
                           
@@ -510,7 +516,7 @@ $total=0;  ?>
                             <br><br> -->
 
 
-                           <input type="submit" class="btn btn-warning" value="Send SMS">
+                           <input type="submit" class="btn btn-warning" value="Proceed to Payment">
                         </form>
                                     </div>
 <?php }?>
@@ -548,8 +554,54 @@ $total=0;  ?>
         <!-- /.row -->
 
 
- 
+<?php if($arr9['phone'] != ''){
+/*echo "hi";*/
+require_once 'src/autoload.php'; // Include the SDK you downloaded in Step 2
 
+$test = true;
+$api_login_id    = '9Q45uN523ys';
+$transaction_key = '7Fy3CK8pH9yD959K';
+
+$amount = $arr9['phone'];
+$fp_timestamp = time();
+$fp_sequence = "123" . time(); // Enter an invoice or other unique number.
+$fingerprint = AuthorizeNetSIM_Form::getFingerprint($api_login_id, $transaction_key, $amount, $fp_sequence, $fp_timestamp);
+
+$action = $test ? "https://test.authorize.net/gateway/transact.dll" : "https://secure.authorize.net/gateway/transact.dll";
+
+$currency = 'USD' // AUD, USD, CAD, EUR, GBP or NZD
+
+?>
+
+<form method='post' action="https://test.authorize.net/gateway/transact.dll">
+  <input type='hidden' name="x_login" value="<?php echo $api_login_id?>" />
+  <input type='hidden' name="x_fp_hash" value="<?php echo $fingerprint?>" />
+  <input type='hidden' name="x_amount" value="<?php echo $amount?>" />
+  <input type='hidden' name="x_fp_timestamp" value="<?php echo $fp_timestamp?>" />
+  <input type='hidden' name="x_fp_sequence" value="<?php echo $fp_sequence?>" />
+  <input type='hidden' name="x_version" value="3.1">
+  <input type='hidden' name="x_description" value="Test Payment">
+  <!-- <input type='hidden' name="x_currency_code" value="<? echo $currency; ?>"> -->
+  <input type='hidden' name="x_invoice_num" value="order-050514">
+  <input type='hidden' name="x_po_num" value="5">
+  <input type='hidden' name="x_show_form" value="payment_form">
+  <input type='hidden' name="x_test_request" value="false" />
+  <input type='hidden' name="x_method" value="cc">
+  <input type='hidden' name="x_test_request" value="<?php echo $test ? 'true' : 'false'; ?>">
+  <input type='hidden' name="x_cancel_url" value="http://localhost/authorize/sim.php">
+
+  <input type='hidden' name="x_relay_response" value="TRUE">
+  <input type='hidden' name="x_relay_always" value="true">
+  <input type='hidden' name="x_relay_url" value="http://localhost/authorize/sim.php?relay">
+
+  <input type='hidden' name="x_receipt_link_method" value="LINK">
+  <input type='hidden' name="x_receipt_link_text" value="Click here to return to our home page">
+  <input type='hidden' name="x_receipt_link_URL" value="http://localhost/authorize/sim.php?success">
+
+<!--   <input type='submit' value="Click here for the secure payment form"> -->
+<input type="submit" style="margin-left:4%" class="btn btn-warning" value="Click here for the secure payment form">
+</form>
+<?php } ?>
         
     <script src='js/jquery1.js'></script>
 
