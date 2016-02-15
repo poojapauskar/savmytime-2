@@ -180,6 +180,8 @@ th, td {
 
      //alert(flag);
 }
+
+
 </script>
     
 
@@ -244,19 +246,11 @@ curl_setopt($ch, CURLOPT_URL,$url);// This will do
 curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 $output = curl_exec($ch);
 $arr = json_decode($output,true);
-/*echo count($arr);
-echo $arr[0]['service'];*/
-
-/*echo $output;*/
 curl_close($ch); 
 ?>
 
 
 <?php
-
-/*echo $_POST['service_selected'];*/
-/*echo "selected service";
-echo $_POST['service_selected'];*/
 if($_POST['service_selected']=='')
 {
 
@@ -267,46 +261,10 @@ $ch1 = curl_init();//I have removed it from here
 curl_setopt($ch1, CURLOPT_URL,$url1);// This will do
 curl_setopt($ch1, CURLOPT_RETURNTRANSFER,1);
 $output1 = curl_exec($ch1);
-/*echo $output1;*/
-/*echo count($arr1[0]['category']);*/
 
 $arr1 = json_decode($output1,true);
-/*echo $arr1[0]['image'];*/
 curl_close($ch1);
 }
-
-/*
-echo $_POST['sub_category_selected'];*/
-
-$c = curl_init();
-$var=$_POST['mobile'];
-$var1=$_POST['name'];
-$var2=$_POST['email'];
-$var3=$_POST['address'];
-
-
-curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($c, CURLOPT_FOLLOWLOCATION, true);
-curl_setopt($c, CURLOPT_URL, "http://0.0.0.0:3000/user_data/");
-curl_setopt($c, CURLOPT_POST, true);
-curl_setopt($c, CURLOPT_POSTFIELDS, 'phone='.$var.'&name='.$var1.'&email='.$var2.'&address='.$var3);
-$result8 = curl_exec($c);
-$arr9 = json_decode($result8,true);
-/*echo $arr9['phone'];
-echo $result8;*/
-/*if($result8 != ''){
-  header('Location: http://localhost/savmytime/authorize-php-examples/sim.php');
-}*/
-curl_close ($c);
-
-
-/*echo $result;*/
-
-
-
-
-/*foreach ($_POST['sub_category_selected'] as $selectedOption)
-    echo $selectedOption."\n";*/
 
 ?>
 
@@ -331,19 +289,98 @@ ob_start(); //Turning ON Output Buffering
   $x4++;
 
   ob_flush();//Flush the data here
-  
-  /*echo $ret;*/
-  /*$arr6=json_encode($result6);*/
-     
-  
   curl_close($c6);
+  
  }
 
- /*echo $ret;
- echo $result6[0]['category'];*/
- /*echo $array4[0][0]['name'];*/
-
  ob_end_flush();
+?>
+
+<?php 
+
+if($_POST['mobile'] != ''){
+
+
+        $c = curl_init();
+        $var=$_POST['mobile'];
+        $var1=$_POST['name'];
+        $var2=$_POST['email'];
+        $var3=$_POST['address'];
+        
+        curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($c, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($c, CURLOPT_URL, "http://0.0.0.0:3000/user_data/");
+        curl_setopt($c, CURLOPT_POST, true);
+        curl_setopt($c, CURLOPT_POSTFIELDS, 'phone='.$var.'&name='.$var1.'&email='.$var2.'&address='.$var3);
+        $result8 = curl_exec($c);
+        $arr9 = json_decode($result8,true);
+      /*  echo $arr9['id'];*/
+
+        curl_close ($c);
+}
+
+?>
+
+
+<?php 
+
+if($ret != ''){
+  if($result8 != ''){
+
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < 5; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    
+    for ($x3 = 0; $x3 < count($array4); $x3++) { 
+  
+        $c12 = curl_init();
+        $var4=$randomString;
+        $var5=$array4[$x3][0]['service'];
+        $var6=$array4[$x3][0]['category'];
+        $var7=$array4[$x3][0]['name'];
+
+        curl_setopt($c12, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($c12, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($c12, CURLOPT_URL, "http://0.0.0.0:3000/transition/");
+        curl_setopt($c12, CURLOPT_POST, true);
+        curl_setopt($c12, CURLOPT_POSTFIELDS, 'transition_id='.$var4.'&service_id='.$var5.'&category_id='.$var6.'&sub_category_id='.$var7);
+        $result12 = curl_exec($c12);
+        $arr12 = json_decode($result12,true);
+
+
+        curl_close ($c12);
+
+    }
+     /* echo $result12;*/
+
+    $characters1 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength1 = strlen($characters1);
+    $randomString1 = '';
+    for ($i = 0; $i < 7; $i++) {
+        $randomString1 .= $characters1[rand(0, $charactersLength1 - 1)];
+    }
+
+    $c13 = curl_init();
+    $var8=$randomString;
+    $var9=$randomString1;
+    $var10=$arr9['id'];
+    $var11="pending";
+
+    curl_setopt($c13, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($c13, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($c13, CURLOPT_URL, "http://0.0.0.0:3000/order/");
+    curl_setopt($c13, CURLOPT_POST, true);
+    curl_setopt($c13, CURLOPT_POSTFIELDS, 'transition_id='.$var8.'&order_id='.$var9.'&user_id='.$var10.'&status='.$var11);
+    $result13 = curl_exec($c13);
+    $arr13 = json_decode($result13,true);
+
+
+    curl_close ($c13);
+}}
+
 ?>
 
   <!-- Page Content -->
@@ -395,7 +432,7 @@ ob_start(); //Turning ON Output Buffering
                           </div>
 
                          <form method="post" action="" style="margin-top:-2%">
-                         <select multiple="multiple" name="sub_category_selected[]" style="overflow: auto;height:350px;width:500px;background-color:transparent;border:transparent;border:solid 1px #E8E8E8 ;font-family: Lato-Light;font-weight: normal;">
+                         <select multiple="multiple" required="True" name="sub_category_selected[]" style="overflow: auto;height:350px;width:500px;background-color:transparent;border:transparent;border:solid 1px #E8E8E8 ;font-family: Lato-Light;font-weight: normal;">
         <!--                   <option style="color:black;font-family: Lato-Regular;font-weight:bold;font-size:15px" value="">Select Your Sub Category</option> -->        
                           <?php  
                               for ($x1 = 0; $x1 < count($arr1[0]['category']); $x1++) {?>
@@ -418,6 +455,24 @@ for ($x2 = 0; $x2 < count($arr1[0]['category'][$x1]['sub_category_details']); $x
                         
 
                              <br><br>
+
+
+                              <input type="text" name="name" placeholder="Your Name">
+
+                          <br><br>
+                         
+<input type="text" name="mobile" pattern="[0-9]{12}" title="Phone number starting with country code and 12 digits" placeholder="Mobile No." required="True">
+                          <br><br>
+
+                          <input type="email" name="email" placeholder="Email">
+                          <br><br>
+
+                          <input type="text" name="address" placeholder="Address">
+                          <br><br>
+
+
+
+
                            <input type="submit" class="btn btn-warning" value="Confirm">
                          <!--  <input type="submit" class="btn btn-warning" value="Submit"> -->
                           </form>
@@ -477,92 +532,22 @@ $total=0;  ?>
 
 
 
-   <div class="col-md-3 portfolio-item" style="margin-left:60%;margin-top:-20%;width:20%;height:30%">
-                                  
-                        <form method="post" action="" style="margin-top:4%">
-
-                          <input type="text" name="name" placeholder="Your Name">
-
-                          <br><br>
-                         
-<input type="text" name="mobile" pattern="[0-9]{12}" title="Phone number starting with country code and 12 digits" placeholder="Mobile No." required="True">
-                          <br><br>
-
-                          <input type="text" name="email" placeholder="Email">
-                          <br><br>
-
-                          <input type="text" name="address" placeholder="Address">
-                          <br><br>
-<?php /*if($ret != ''){
-  $details5=[];
-  for ($x3 = 0; $x3 < count($array4); $x3++) { 
-    $details5['service'][$x3]=$array4[$x3][0]['service'];
-    $details5['category'][$x3]=$array4[$x3][0]['category'];
-    $details5['sub_category'][$x3]=$array4[$x3][0]['name'];
-  echo json_encode($details5);
-}}*/?>
-                         <!-- <input type="text" name="details" value="<?php echo $details5 ?>" placeholder="Details">
-                          <br><br> -->
- 
-                          
-
-                          
-
-                          <!-- <select name="mydropdown" style="width:172px;background-color:transparent;border:transparent;border:solid 1px #E8E8E8 ;font-family: Lato-Light;font-weight: normal;">
-                            <option value="">Select Sub Category</option>
-                            <option value="bangalore">Bangalore</option>
-                            <option value="mumbai">Mumbai</option>
-                            </select>
-                            <br><br> -->
-
-
-                           <input type="submit" class="btn btn-warning" value="Proceed to Payment">
-                        </form>
-                                    </div>
+   
 <?php }?>
 <h6 style="margin-top:-4%;margin-left:45%;align:right;text-align:right;color:#1DAE91;font-family: Lato-Regular;"><?php echo $arr1[0]['description']; ?></h6>
-  
 
-<!-- 
-
-                          <form method="post" action="" style="margin-top:2%">
-
-                         
-                        </form> -->
-
-                          
-
-                             
-                        
-                                    </div>
+</div>
+</div>
 
 
-             
-
-
-
-           
-        </div>
-        <!-- /.row -->
-
-        <!-- Projects Row -->
-        
-        <!-- /.row -->
-
-        <!-- Projects Row -->
-        
-        <!-- /.row -->
-
-
-<?php if($arr9['phone'] != ''){
-/*echo "hi";*/
+<?php if($_POST['sub_category_selected']){
 require_once 'src/autoload.php'; // Include the SDK you downloaded in Step 2
 
 $test = true;
 $api_login_id    = '9Q45uN523ys';
 $transaction_key = '7Fy3CK8pH9yD959K';
 
-$amount = $arr9['phone'];
+$amount = $total;
 $fp_timestamp = time();
 $fp_sequence = "123" . time(); // Enter an invoice or other unique number.
 $fingerprint = AuthorizeNetSIM_Form::getFingerprint($api_login_id, $transaction_key, $amount, $fp_sequence, $fp_timestamp);
@@ -598,10 +583,21 @@ $currency = 'USD' // AUD, USD, CAD, EUR, GBP or NZD
   <input type='hidden' name="x_receipt_link_text" value="Click here to return to our home page">
   <input type='hidden' name="x_receipt_link_URL" value="http://localhost/authorize/sim.php?success">
 
-<!--   <input type='submit' value="Click here for the secure payment form"> -->
-<input type="submit" style="margin-left:4%" class="btn btn-warning" value="Click here for the secure payment form">
+  <input style="margin-top:5%;margin-left:46.8%" class="btn btn-warning" type='submit' value="Proceed to Payment">
 </form>
+
 <?php } ?>
+        <!-- /.row -->
+
+        <!-- Projects Row -->
+        
+        <!-- /.row -->
+
+        <!-- Projects Row -->
+        
+        <!-- /.row -->
+
+
         
     <script src='js/jquery1.js'></script>
 
