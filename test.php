@@ -232,7 +232,18 @@ th, td {
 </nav>
 
 
-
+<?php 
+/*$id=$_GET['id'];*/
+$url_city="https://savmytime.herokuapp.com/get_cities/";
+$ch_city = curl_init();//I have removed it from here
+curl_setopt($ch_city, CURLOPT_URL,$url_city);// This will do
+curl_setopt($ch_city, CURLOPT_RETURNTRANSFER,1);
+$output_city = curl_exec($ch_city);
+/*echo $output_city;*/
+$city = json_decode($output_city,true);
+curl_close($ch_city);
+ 
+?>
 
 
 
@@ -240,13 +251,24 @@ th, td {
 
 <?php 
 /*$id=$_GET['id'];*/
-$url="http://0.0.0.0:3000/get_services/";
+
+/*echo $_POST['city_selected'];*/
+if($_POST['city_selected']=='')
+{
+
+}else{
+  /*echo "hi";*/
+$id11=$_POST['city_selected'];
+$url="https://savmytime.herokuapp.com/get_services/city_id=".$id11."/";
+/*echo $url;*/
 $ch = curl_init();//I have removed it from here
 curl_setopt($ch, CURLOPT_URL,$url);// This will do
 curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 $output = curl_exec($ch);
+/*echo $output;*/
 $arr = json_decode($output,true);
 curl_close($ch); 
+}
 ?>
 
 
@@ -256,11 +278,13 @@ if($_POST['service_selected']=='')
 
 }else{
 $id=$_POST['service_selected'];
-$url1="http://0.0.0.0:3000/get_details/id=".$id."/";
+$url1="https://savmytime.herokuapp.com/get_details/id=".$id."/";
 $ch1 = curl_init();//I have removed it from here
 curl_setopt($ch1, CURLOPT_URL,$url1);// This will do
 curl_setopt($ch1, CURLOPT_RETURNTRANSFER,1);
 $output1 = curl_exec($ch1);
+
+/*echo $output1;*/
 
 $arr1 = json_decode($output1,true);
 curl_close($ch1);
@@ -277,7 +301,7 @@ ob_start(); //Turning ON Output Buffering
  foreach ($_POST['sub_category_selected'] as $value)
  {
   $c6 = curl_init();
-  $url6="http://0.0.0.0:3000/get_sub_category_details/id=".$value."/";
+  $url6="https://savmytime.herokuapp.com/get_sub_category_details/id=".$value."/";
   $c6 = curl_init();//I have removed it from here
   curl_setopt($c6, CURLOPT_URL,$url6);// This will do
   curl_setopt($c6, CURLOPT_RETURNTRANSFER,1);
@@ -309,7 +333,7 @@ if($_POST['mobile'] != ''){
         
         curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($c, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($c, CURLOPT_URL, "http://0.0.0.0:3000/user_data/");
+        curl_setopt($c, CURLOPT_URL, "https://savmytime.herokuapp.com/user_data/");
         curl_setopt($c, CURLOPT_POST, true);
         curl_setopt($c, CURLOPT_POSTFIELDS, 'phone='.$var.'&name='.$var1.'&email='.$var2.'&address='.$var3);
         $result8 = curl_exec($c);
@@ -344,7 +368,7 @@ if($ret != ''){
 
         curl_setopt($c12, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($c12, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($c12, CURLOPT_URL, "http://0.0.0.0:3000/transition/");
+        curl_setopt($c12, CURLOPT_URL, "https://savmytime.herokuapp.com/transition/");
         curl_setopt($c12, CURLOPT_POST, true);
         curl_setopt($c12, CURLOPT_POSTFIELDS, 'transition_id='.$var4.'&service_id='.$var5.'&category_id='.$var6.'&sub_category_id='.$var7);
         $result12 = curl_exec($c12);
@@ -371,7 +395,7 @@ if($ret != ''){
 
     curl_setopt($c13, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($c13, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($c13, CURLOPT_URL, "http://0.0.0.0:3000/order/");
+    curl_setopt($c13, CURLOPT_URL, "https://savmytime.herokuapp.com/order/");
     curl_setopt($c13, CURLOPT_POST, true);
     curl_setopt($c13, CURLOPT_POSTFIELDS, 'transition_id='.$var8.'&order_id='.$var9.'&user_id='.$var10.'&status='.$var11);
     $result13 = curl_exec($c13);
@@ -394,11 +418,38 @@ if($ret != ''){
         <!-- Projects Row -->
         <div class="row" style="margin-top:0%">
 
-<br>
-
-          <?php if($ret == ''){ if($arr9['phone'] == ''){?>            
-                  
+<br>      
+       
+            <?php if($arr9['phone'] == ''){?>      
                       <form method="post" action="" style="margin-top:-9%">
+                          <select name="city_selected" style="width:372px;background-color:transparent;border:transparent;border:solid 1px #E8E8E8 ;font-family: Lato-Light;font-weight: normal;margin-top:8%;">
+                       
+           <?php
+      if($output == '') {?>
+          <option value="">Select Your City</option>
+
+        <?php }else{?>
+          <option value="">Select Another City</option>
+          <?php } ?>
+
+     
+                            <?php 
+                              for ($x = 0; $x <= count($city); $x++) { ?>
+                                  <option value=<?php echo $city[$x]['id'] ?> ><?php echo $city[$x]['city'] ?></option>
+                            <?php  } 
+                            ?>
+                            </select>
+                            <br><br>
+                            
+                            <input type="submit" class="btn btn-warning" value="Select Category">
+                            
+                        </form>
+                <?php } ?>
+         
+
+          <?php if($arr9['phone'] == ''){?>            
+                  
+                      <form method="post" action="" style="margin-top:-5%">
                           <select name="service_selected" style="width:372px;background-color:transparent;border:transparent;border:solid 1px #E8E8E8 ;font-family: Lato-Light;font-weight: normal;margin-top:8%;">
                           
              <?php
@@ -420,7 +471,7 @@ if($ret != ''){
                             <input type="submit" class="btn btn-warning" value="Select Sub Category">
                             
                         </form>
-         <?php }}?>
+         <?php }?>
                         <br><br>
 
                         <?php
@@ -431,7 +482,7 @@ if($ret != ''){
                           <img align="right" style="width:50%;height:50%;margin-top:-9%;" src="<?php echo $arr1[0]['image']; ?>"/>
                           </div>
 
-                         <form method="post" action="" style="margin-top:-2%">
+                         <form method="post" action="" style="margin-top:5%">
                          <select multiple="multiple" required="True" name="sub_category_selected[]" style="overflow: auto;height:350px;width:500px;background-color:transparent;border:transparent;border:solid 1px #E8E8E8 ;font-family: Lato-Light;font-weight: normal;">
         <!--                   <option style="color:black;font-family: Lato-Regular;font-weight:bold;font-size:15px" value="">Select Your Sub Category</option> -->        
                           <?php  
@@ -581,7 +632,7 @@ $currency = 'USD' // AUD, USD, CAD, EUR, GBP or NZD
 
   <input type='hidden' name="x_receipt_link_method" value="LINK">
   <input type='hidden' name="x_receipt_link_text" value="Click here to return to our home page">
-  <input type='hidden' name="x_receipt_link_URL" value="http://localhost/authorize/sim.php?success">
+  <input type='hidden' name="x_receipt_link_URL" value="https://savmytime.herokuapp.com/authorize/sim.php?success">
 
   <input style="margin-top:5%;margin-left:46.8%" class="btn btn-warning" type='submit' value="Proceed to Payment">
 </form>
