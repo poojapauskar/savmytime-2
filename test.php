@@ -301,14 +301,14 @@ ob_start(); //Turning ON Output Buffering
  foreach ($_POST['sub_category_selected'] as $value)
  {
   $c6 = curl_init();
-  $url6="https://savmytime.herokuapp.com/get_sub_category_details/id=".$value."/";
+  $url6="http://0.0.0.0:9000/get_sub_category_details/id=".$value."/";
   $c6 = curl_init();//I have removed it from here
   curl_setopt($c6, CURLOPT_URL,$url6);// This will do
   curl_setopt($c6, CURLOPT_RETURNTRANSFER,1);
 
   $ret = curl_exec($c6);
   $result6= json_decode($ret,true);
-
+  /*echo $result6;*/
   $array4[$x4]=$result6;
   $x4++;
 
@@ -494,7 +494,16 @@ if($ret != ''){
              
 <?php 
 for ($x2 = 0; $x2 < count($arr1[0]['category'][$x1]['sub_category_details']); $x2++) { ?>
-    <option value=<?php echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['id']?> ><?php echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['sub_category'];echo "&nbsp $nbsp&nbsp $nbsp&nbsp $nbsp";echo "Rs.";echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['price'];echo "/-"?></option>
+      
+
+      <?php if($arr1[0]['category'][$x1]['sub_category_details'][$x2]['price'] == "On Inspection" || $arr1[0]['category'][$x1]['sub_category_details'][$x2]['price']=="Post Discussion"){?>  
+        <option value=<?php echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['id']?> ><?php echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['sub_category'];echo "&nbsp $nbsp&nbsp $nbsp&nbsp $nbsp";echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['price'];?></option>
+      <?php }else{?>
+        <option value=<?php echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['id']?> ><?php echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['sub_category'];echo "&nbsp $nbsp&nbsp $nbsp&nbsp $nbsp";echo "Rs.";echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['price'];echo "/-"?></option>
+      <?php }?>
+
+
+
 <?php  }
 ?>
                    
@@ -534,30 +543,47 @@ for ($x2 = 0; $x2 < count($arr1[0]['category'][$x1]['sub_category_details']); $x
 
 <?php if($_POST['sub_category_selected']){
 $total=0;  ?>
- 
+
+<h6 style="font-size:15px;margin-top:-5%;margin-left:10%;color:#eea236;font-family: Lato-Regular;">Services Selected having Fixed Prize </h6>
+
 <table>
   <tr>
     <th>Service</th>
     <th>Category</th>
     <th>Sub Category</th>
+    <th>Prepaid/Postpaid</th>
     <th>Price</th>
+    
   </tr>
 <?php if($ret != ''){
   for ($x3 = 0; $x3 < count($array4); $x3++) { 
-  $total+=$array4[$x3][0]['price'];?> 
-  <tr>
-    <td><?php echo $array4[$x3][0]['service']?></td>
-    <td><?php echo $array4[$x3][0]['category']?></td> 
-    <td><?php echo $array4[$x3][0]['name']?></td>
-    <!-- <td><?php echo $array4[$x3][0]['description']?></td> -->
-    <td><?php echo"Rs.";echo $array4[$x3][0]['price'];echo "/-"?></td>
-    </tr>
-  <tr>
-  </tr>
-  <tr>
-  </tr>
-  <tr>
-  </tr>
+
+               $total+=$array4[$x3][0]['price'];
+                  $count=0?> 
+                  <?php 
+                    if($array4[$x3][0]['payment'] == 0){
+                      $payment_mode="Postpaid";
+                    }
+                    else{
+                      $payment_mode="Prepaid";
+                      $count++;
+                      
+                    } ?>
+
+
+                  <?php if($array4[$x3][0]['price'] == "On Inspection" || $array4[$x3][0]['price'] == "Post Discussion"){
+
+                  }else{?>
+                  <tr>
+                    <td><?php echo $array4[$x3][0]['service']?></td>
+                    <td><?php echo $array4[$x3][0]['category']?></td> 
+                    <td><?php echo $array4[$x3][0]['name']?></td>
+                    <!-- <td><?php echo $array4[$x3][0]['description']?></td> -->
+                    <td><?php echo $payment_mode?></td>
+                    <td><?php echo"Rs.";echo $array4[$x3][0]['price'];echo "/-"?></td>
+                  </tr>
+                <?php }?>
+                
 <?php }}?>
 
 
@@ -565,15 +591,18 @@ $total=0;  ?>
     <th>Tax</th>
     <th></th>
     <th></th>
+    <th></th>
     <th>Rs.20/-</th>
   </tr>
     <th>Other Charges</th>
     <th></th>
     <th></th>
+    <th></th>
     <th>Rs.8/-</th>
   <tr>
   </tr>
-    <th>Grand Total</th>
+    <th>Grand Total for Prepaid Services</th>
+    <th></th>
     <th></th>
     <th></th>
     <th><?php echo"Rs.";echo $total;echo "/-"?></th>
@@ -582,6 +611,48 @@ $total=0;  ?>
 </table>
 
 
+<h6 style="font-size:15px;margin-top:2%;margin-left:10%;color:#eea236;font-family: Lato-Regular;">Services Selected having Prize On Inspection</h6>
+
+<table>
+  <tr>
+    <th>Service</th>
+    <th>Category</th>
+    <th>Sub Category</th>
+    <th>Prepaid/Postpaid</th>
+    <th>Price</th>
+    
+  </tr>
+<?php if($ret != ''){
+  for ($x3 = 0; $x3 < count($array4); $x3++) { 
+
+               $total+=$array4[$x3][0]['price'];
+                  $count=0?> 
+                  <?php 
+                    if($array4[$x3][0]['payment'] == 0){
+                      $payment_mode="Postpaid";
+                    }
+                    else{
+                      $payment_mode="Prepaid";
+                      $count++;
+                      
+                    } ?>
+
+
+                <?php if($array4[$x3][0]['price'] == "On Inspection" || $array4[$x3][0]['price'] == "Post Discussion"){ ?>
+                    <tr>
+                    <td><?php echo $array4[$x3][0]['service']?></td>
+                    <td><?php echo $array4[$x3][0]['category']?></td> 
+                    <td><?php echo $array4[$x3][0]['name']?></td>
+                    <!-- <td><?php echo $array4[$x3][0]['description']?></td> -->
+                    <td><?php echo $payment_mode?></td>
+                    <td><?php echo $array4[$x3][0]['price'];?></td>
+                  </tr>
+                <?php   }else{
+                  
+                }?>
+                
+<?php }}?>
+</table>
 
    
 <?php }?>
@@ -591,7 +662,7 @@ $total=0;  ?>
 </div>
 
 
-<?php if($_POST['sub_category_selected']){
+<?php if($_POST['sub_category_selected']){if($count>0){
 require_once 'src/autoload.php'; // Include the SDK you downloaded in Step 2
 
 $test = true;
@@ -637,7 +708,11 @@ $currency = 'USD' // AUD, USD, CAD, EUR, GBP or NZD
   <input style="margin-top:5%;margin-left:46.8%" class="btn btn-warning" type='submit' value="Proceed to Payment">
 </form>
 
-<?php } ?>
+<?php } else{?>
+
+     <h6 style="font-size:20px;margin-top:8%;margin-left:20%;color:#1DAE91;font-family: Lato-Regular;"> Thank You for using our Services </h6>
+
+<?php  }} ?>
         <!-- /.row -->
 
         <!-- Projects Row -->
