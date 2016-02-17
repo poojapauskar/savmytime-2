@@ -301,7 +301,7 @@ ob_start(); //Turning ON Output Buffering
  foreach ($_POST['sub_category_selected'] as $value)
  {
   $c6 = curl_init();
-  $url6="http://0.0.0.0:9000/get_sub_category_details/id=".$value."/";
+  $url6="https://savmytime.herokuapp.com/get_sub_category_details/id=".$value."/";
   $c6 = curl_init();//I have removed it from here
   curl_setopt($c6, CURLOPT_URL,$url6);// This will do
   curl_setopt($c6, CURLOPT_RETURNTRANSFER,1);
@@ -407,9 +407,48 @@ if($ret != ''){
 
 ?>
 
+
+<?php
+
+if($_POST['amount'] != ''){
+  $url_card = 'http://0.0.0.0:8090/credit_card/';
+  $headr = array(
+      'CREDIT-CARD-NO: '.$_POST['credit_card_no'],
+      'AMOUNT: '.$_POST['amount'],
+      'EXPIRY-DATE: '.$_POST['expiry_date'],
+      );
+  /*$headr[] = 'Accept: application/json';
+  $headr[] = 'Authorization: Basic '.$accesstoken;*/
+
+  //cURL starts
+  $crl_card = curl_init();
+  curl_setopt($crl_card, CURLOPT_URL, $url_card);
+  curl_setopt($crl_card, CURLOPT_HTTPHEADER,$headr);
+  curl_setopt($crl_card, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($crl_card, CURLOPT_HTTPGET,true);
+  $reply_card = curl_exec($crl_card);
+  /*echo $reply_card;*/
+  $arr_card = json_decode($reply_card,true);
+  /*echo $arr_card[0]['status'];*/
+  /*echo $arr2[0]['status'];*/
+
+  curl_close($reply_card);
+
+
+}?>
+
+
+
   <!-- Page Content -->
     <div class="container">
-
+<?php if($arr_card[0]['status'] == "200"){?>
+   <!-- <h6 style="font-size:20px;margin-top:3%;margin-left:0%;color:#1DAE91;font-family: Lato-Regular;"> Thank You for using our Services </h6>
+ -->
+<?php }?>
+<?php if($arr_card[0]['status'] == "400"){?>
+   <!-- <h6 style="font-size:20px;margin-top:3%;margin-left:0%;color:#1DAE91;font-family: Lato-Regular;"> Wrong Credit Card Details </h6>
+ -->
+<?php }?>
 
     <h4 style="text-align:center;font-family: Lato-Regular;"><?php echo $arr1[0]['name']; ?></h4>
     
@@ -472,6 +511,8 @@ if($ret != ''){
                             
                         </form>
          <?php }?>
+
+
                         <br><br>
 
                         <?php
@@ -625,7 +666,7 @@ $total=0;  ?>
 <?php if($ret != ''){
   for ($x3 = 0; $x3 < count($array4); $x3++) { 
 
-               $total+=$array4[$x3][0]['price'];
+               
                   $count=0?> 
                   <?php 
                     if($array4[$x3][0]['payment'] == 0){
@@ -662,56 +703,34 @@ $total=0;  ?>
 </div>
 
 
-<?php if($_POST['sub_category_selected']){if($count>0){
-require_once 'src/autoload.php'; // Include the SDK you downloaded in Step 2
-
-$test = true;
-$api_login_id    = '9Q45uN523ys';
-$transaction_key = '7Fy3CK8pH9yD959K';
-
-$amount = $total;
-$fp_timestamp = time();
-$fp_sequence = "123" . time(); // Enter an invoice or other unique number.
-$fingerprint = AuthorizeNetSIM_Form::getFingerprint($api_login_id, $transaction_key, $amount, $fp_sequence, $fp_timestamp);
-
-$action = $test ? "https://test.authorize.net/gateway/transact.dll" : "https://secure.authorize.net/gateway/transact.dll";
-
-$currency = 'USD' // AUD, USD, CAD, EUR, GBP or NZD
+<?php if($_POST['sub_category_selected']){if($count==0){
 
 ?>
 
-<form method='post' action="https://test.authorize.net/gateway/transact.dll">
-  <input type='hidden' name="x_login" value="<?php echo $api_login_id?>" />
-  <input type='hidden' name="x_fp_hash" value="<?php echo $fingerprint?>" />
-  <input type='hidden' name="x_amount" value="<?php echo $amount?>" />
-  <input type='hidden' name="x_fp_timestamp" value="<?php echo $fp_timestamp?>" />
-  <input type='hidden' name="x_fp_sequence" value="<?php echo $fp_sequence?>" />
-  <input type='hidden' name="x_version" value="3.1">
-  <input type='hidden' name="x_description" value="Test Payment">
-  <!-- <input type='hidden' name="x_currency_code" value="<? echo $currency; ?>"> -->
-  <input type='hidden' name="x_invoice_num" value="order-050514">
-  <input type='hidden' name="x_po_num" value="5">
-  <input type='hidden' name="x_show_form" value="payment_form">
-  <input type='hidden' name="x_test_request" value="false" />
-  <input type='hidden' name="x_method" value="cc">
-  <input type='hidden' name="x_test_request" value="<?php echo $test ? 'true' : 'false'; ?>">
-  <input type='hidden' name="x_cancel_url" value="http://localhost/authorize/sim.php">
 
-  <input type='hidden' name="x_relay_response" value="TRUE">
-  <input type='hidden' name="x_relay_always" value="true">
-  <input type='hidden' name="x_relay_url" value="http://localhost/authorize/sim.php?relay">
 
-  <input type='hidden' name="x_receipt_link_method" value="LINK">
-  <input type='hidden' name="x_receipt_link_text" value="Click here to return to our home page">
-  <input type='hidden' name="x_receipt_link_URL" value="https://savmytime.herokuapp.com/authorize/sim.php?success">
 
-  <input style="margin-top:5%;margin-left:46.8%" class="btn btn-warning" type='submit' value="Proceed to Payment">
-</form>
+<!-- <form method='post' style="margin-top:4%;margin-left:5%" action="">
+<br>
+  <label style="font-size:15px;color:#1DAE91;font-family: Lato-Regular;">Amount (in Rs.)</label>
+  <br> 
+  <input type='text' readonly="true" name="amount" value="<?php echo $total ?>"></input>
+  <br>
+  <label style="font-size:15px;color:#1DAE91;font-family: Lato-Regular;">Credit Card Number</label>
+  <br>
+  <input type='text' name="credit_card_no" value=""></input>
+  <br>
+  <label style="font-size:15px;color:#1DAE91;font-family: Lato-Regular;">Expiry Date (yyyy-mm)</label>
+  <br>
+  <input type='text' name="expiry_date" value=""></input>
+  <br>
+    <input style="margin-top:1%;margin-left:0%" class="btn btn-warning" type='submit' value="Proceed to Payment">
+</form> -->
 
 <?php } else{?>
 
-     <h6 style="font-size:20px;margin-top:8%;margin-left:20%;color:#1DAE91;font-family: Lato-Regular;"> Thank You for using our Services </h6>
-
+     <!-- <h6 style="font-size:20px;margin-top:8%;margin-left:20%;color:#1DAE91;font-family: Lato-Regular;"> Thank You for using our Services </h6>
+ -->
 <?php  }} ?>
         <!-- /.row -->
 
