@@ -337,6 +337,7 @@ if($_POST['mobile'] != ''){
         curl_setopt($c, CURLOPT_POST, true);
         curl_setopt($c, CURLOPT_POSTFIELDS, 'phone='.$var.'&name='.$var1.'&email='.$var2.'&address='.$var3);
         $result8 = curl_exec($c);
+        /*echo $result8;*/
         $arr9 = json_decode($result8,true);
       /*  echo $arr9['id'];*/
 
@@ -372,6 +373,7 @@ if($ret != ''){
         curl_setopt($c12, CURLOPT_POST, true);
         curl_setopt($c12, CURLOPT_POSTFIELDS, 'transition_id='.$var4.'&service_id='.$var5.'&category_id='.$var6.'&sub_category_id='.$var7);
         $result12 = curl_exec($c12);
+        /*echo $result12;*/
         $arr12 = json_decode($result12,true);
 
 
@@ -399,6 +401,7 @@ if($ret != ''){
     curl_setopt($c13, CURLOPT_POST, true);
     curl_setopt($c13, CURLOPT_POSTFIELDS, 'transition_id='.$var8.'&order_id='.$var9.'&user_id='.$var10.'&status='.$var11);
     $result13 = curl_exec($c13);
+    /*echo $result13;*/
     $arr13 = json_decode($result13,true);
 
 
@@ -411,7 +414,7 @@ if($ret != ''){
 <?php
 
 if($_POST['amount'] != ''){
-  $url_card = 'http://0.0.0.0:8090/credit_card/';
+  $url_card = 'http://0.0.0.0:9000/credit_card/';
   $headr = array(
       'CREDIT-CARD-NO: '.$_POST['credit_card_no'],
       'AMOUNT: '.$_POST['amount'],
@@ -437,6 +440,36 @@ if($_POST['amount'] != ''){
 
 }?>
 
+<?php
+
+if($_POST['confirm_phone'] != ''){
+  $url_confirm = 'http://0.0.0.0:9000/send_msg_mail/';
+  $headr = array(
+      'NAME: '.$_POST['confirm_name'],
+      'PHONE: '.$_POST['confirm_phone'],
+      'EMAIL: '.$_POST['confirm_email'],
+      'ORDER-ID: '.$_POST['confirm_order_id'],
+      );
+  /*$headr[] = 'Accept: application/json';
+  $headr[] = 'Authorization: Basic '.$accesstoken;*/
+
+  //cURL starts
+  $crl_confirm = curl_init();
+  curl_setopt($crl_confirm, CURLOPT_URL, $url_confirm);
+  curl_setopt($crl_confirm, CURLOPT_HTTPHEADER,$headr);
+  curl_setopt($crl_confirm, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($crl_confirm, CURLOPT_HTTPGET,true);
+  $reply_confirm = curl_exec($crl_confirm);
+  /*echo $reply_card;*/
+  $arr_confirm = json_decode($reply_confirm,true);
+  /*echo $arr_card[0]['status'];*/
+  /*echo $arr2[0]['status'];*/
+
+  curl_close($reply_confirm);
+
+
+}?>
+
 
 
   <!-- Page Content -->
@@ -449,6 +482,13 @@ if($_POST['amount'] != ''){
    <!-- <h6 style="font-size:20px;margin-top:3%;margin-left:0%;color:#1DAE91;font-family: Lato-Regular;"> Wrong Credit Card Details </h6>
  -->
 <?php }?>
+
+
+<?php if($arr_confirm != ''){?>
+   <h6 style="font-size:20px;margin-top:3%;margin-left:0%;color:#1DAE91;font-family: Lato-Regular;"> Your request is in process.<br> Thank You for using SAVMYTIME.</h6>
+
+<?php }?>
+
 
     <h4 style="text-align:center;font-family: Lato-Regular;"><?php echo $arr1[0]['name']; ?></h4>
     
@@ -565,7 +605,7 @@ for ($x2 = 0; $x2 < count($arr1[0]['category'][$x1]['sub_category_details']); $x
 <input type="text" name="mobile" pattern="[0-9]{12}" title="Phone number starting with country code and 12 digits" placeholder="Mobile No." required="True">
                           <br><br>
 
-                          <input type="email" name="email" placeholder="Email">
+                          <input type="email" name="email" placeholder="Email" required="True">
                           <br><br>
 
                           <input type="text" name="address" placeholder="Address">
@@ -574,7 +614,7 @@ for ($x2 = 0; $x2 < count($arr1[0]['category'][$x1]['sub_category_details']); $x
 
 
 
-                           <input type="submit" class="btn btn-warning" value="Confirm">
+                           <input type="submit" class="btn btn-warning" value="Continue">
                          <!--  <input type="submit" class="btn btn-warning" value="Submit"> -->
                           </form>
 
@@ -701,6 +741,33 @@ $total=0;  ?>
 
 </div>
 </div>
+
+
+
+
+<?php if($_POST['sub_category_selected']){ ?>
+                            <form method="post" action="" style="margin-top:4%;margin-left:5%">
+                            <label style="font-size:15px;color:#1DAE91;font-family: Lato-Regular;">Name</label>
+                            <br>
+                            <input type="text" name="confirm_name" readonly="readonly" placeholder="" value="<?php echo $arr9['name'] ?>">
+                            <br>
+                            <label style="font-size:15px;color:#1DAE91;font-family: Lato-Regular;">Phone No.</label>
+                            <br>
+                            <input type="text" name="confirm_phone" readonly="readonly" placeholder="" value="<?php echo $arr9['phone'] ?>">
+                            <br>
+                            <label style="font-size:15px;color:#1DAE91;font-family: Lato-Regular;">Email</label>
+                            <br>
+                            <input type="text" name="confirm_email" readonly="true" placeholder="" value="<?php echo $arr9['email'] ?>">
+                            <br>
+                            <label style="font-size:15px;color:#1DAE91;font-family: Lato-Regular;">Order Id</label>
+                            <br>
+                            <input type="text" name="confirm_order_id" readonly="true" placeholder="" value="<?php echo $arr13['order_id'] ?>">
+                            <br><br>
+                            <input type="submit" class="btn btn-warning" value="Confirm">
+                         <!--  <input type="submit" class="btn btn-warning" value="Submit"> -->
+                          </form>
+
+                          <?php } ?>
 
 
 <?php if($_POST['sub_category_selected']){if($count==0){
