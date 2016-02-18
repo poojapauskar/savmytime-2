@@ -1,0 +1,34 @@
+
+  $myTextFileHandler = @fopen("file.txt","r+");
+  @ftruncate($myTextFileHandler, 0);
+
+
+
+
+
+
+
+
+<?php
+
+                    $file = 'file.txt';
+                    // Ouvre un fichier pour lire un contenu existant
+                    $current = file_get_contents($file);
+                    // Ajoute une personne
+                    $current .= $array4[$x3][0]['service'];
+                    $current .= "\n";
+                    $current .= $array4[$x3][0]['category'];
+                    $current .= "\n";
+                    $current .= $array4[$x3][0]['name'];
+                    $current .= "\n";
+                    $current .= $payment_mode;
+                    $current .= "\n";
+                    $current .= $array4[$x3][0]['price'];
+                    $current .= "\n";
+                    $current .= "\n";
+                    $current .= "\n";
+                    $current .= "\n";
+
+                    // Écrit le résultat dans le fichier
+                    file_put_contents($file, $current);
+                ?>

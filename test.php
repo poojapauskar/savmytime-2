@@ -414,7 +414,7 @@ if($ret != ''){
 <?php
 
 if($_POST['amount'] != ''){
-  $url_card = 'http://0.0.0.0:9000/credit_card/';
+  $url_card = 'https://savmytime.herokuapp.com/credit_card/';
   $headr = array(
       'CREDIT-CARD-NO: '.$_POST['credit_card_no'],
       'AMOUNT: '.$_POST['amount'],
@@ -443,7 +443,7 @@ if($_POST['amount'] != ''){
 <?php
 
 if($_POST['confirm_phone'] != ''){
-  $url_confirm = 'http://0.0.0.0:9000/send_msg_mail/';
+  $url_confirm = 'https://savmytime.herokuapp.com/send_msg_mail/';
   $headr = array(
       'NAME: '.$_POST['confirm_name'],
       'PHONE: '.$_POST['confirm_phone'],
@@ -485,7 +485,7 @@ if($_POST['confirm_phone'] != ''){
 
 
 <?php if($arr_confirm != ''){?>
-   <h6 style="font-size:20px;margin-top:3%;margin-left:0%;color:#1DAE91;font-family: Lato-Regular;"> Your request is in process.<br> Thank You for using SAVMYTIME.</h6>
+   <h6 style="font-size:15px;margin-top:3%;margin-left:0%;color:#1DAE91;font-family: Lato-Regular;"> Your request is in process.<br> Thank You for using SAVMYTIME.</h6>
 
 <?php }?>
 
@@ -704,6 +704,8 @@ $total=0;  ?>
     
   </tr>
 <?php if($ret != ''){
+
+
   for ($x3 = 0; $x3 < count($array4); $x3++) { 
 
                
@@ -731,6 +733,9 @@ $total=0;  ?>
                 <?php   }else{
                   
                 }?>
+
+
+                
                 
 <?php }}?>
 </table>
@@ -763,7 +768,15 @@ $total=0;  ?>
                             <br>
                             <input type="text" name="confirm_order_id" readonly="true" placeholder="" value="<?php echo $arr13['order_id'] ?>">
                             <br><br>
+                            
                             <input type="submit" class="btn btn-warning" value="Confirm">
+                            <button onclick="goBack()" class="btn btn-warning">Go Back</button>
+
+                            <script>
+                            function goBack() {
+                                window.history.back();
+                            }
+                            </script>
                          <!--  <input type="submit" class="btn btn-warning" value="Submit"> -->
                           </form>
 
