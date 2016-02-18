@@ -21,6 +21,7 @@
 
     <!-- Custom CSS -->
     <link href="css/4-col-portfolio.css" rel="stylesheet">
+    <link href="jquery.multiselect.css" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -146,8 +147,19 @@ th, td {
 }
 
 
+ul,li { margin:0; padding:0; list-style:none;}
+.label {color:#1DAE91;font-family: Lato-Regular;font-weight:bold; font-size: 12px}
+.container1 { max-width:450px; margin-top:0%;}
 
-
+#label1{
+  /*font-size:20px;*/
+}
+#description1{
+  /*color:#eea236;
+  font-family: Lato-Regular;
+  font-size:10px;
+  font-weight:normal*/
+}
 
 .zoom img{
     box-shadow: 2.5px 2.5px 2.5px #909090;
@@ -563,35 +575,41 @@ if($_POST['confirm_phone'] != ''){
                           <img align="right" style="width:50%;height:50%;margin-top:-9%;" src="<?php echo $arr1[0]['image']; ?>"/>
                           </div>
 
-                         <form method="post" action="" style="margin-top:5%">
-                         <select multiple="multiple" required="True" name="sub_category_selected[]" style="overflow: auto;height:350px;width:500px;background-color:transparent;border:transparent;border:solid 1px #E8E8E8 ;font-family: Lato-Light;font-weight: normal;">
-        <!--                   <option style="color:black;font-family: Lato-Regular;font-weight:bold;font-size:15px" value="">Select Your Sub Category</option> -->        
-                          <?php  
-                              for ($x1 = 0; $x1 < count($arr1[0]['category']); $x1++) {?>
-<option value=""><?php echo "<br>"; ?></option> 
-<option value=""><?php echo "<br>"; ?></option>                              
-<option value="" style="color:#1DAE91;font-family: Lato-Regular;font-size:16px;font-weight:bold"><?php echo $arr1[0]['category'][$x1]['name'];?></option>
-<option value="" style="color:#FF9933;font-family: Lato-Regular;font-size:13px;"><?php echo $arr1[0]['category'][$x1]['description'];?></option>
-             
+<form method="post" action="" style="margin-top:0%">
+<div class="container1">
+<select name="sub_category_selected[]" multiple="multiple" required="True">
+<?php  
+  for ($x1 = 0; $x1 < count($arr1[0]['category']); $x1++) {?>
+        <optgroup label="<?php echo "<br>";?>">
+        <optgroup id="label1" label="<?php echo $arr1[0]['category'][$x1]['name'];?>">
+        <optgroup id="description1" label="<?php echo $arr1[0]['category'][$x1]['description'];?>"> 
 <?php 
-for ($x2 = 0; $x2 < count($arr1[0]['category'][$x1]['sub_category_details']); $x2++) { ?>
-      
+  for ($x2 = 0; $x2 < count($arr1[0]['category'][$x1]['sub_category_details']); $x2++) { ?>
+                <?php if($arr1[0]['category'][$x1]['sub_category_details'][$x2]['price'] == "On Inspection" || $arr1[0]['category'][$x1]['sub_category_details'][$x2]['price']=="Post Discussion"){?>  
+                <option value=<?php echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['id']?> ><?php echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['sub_category'];echo "&nbsp $nbsp&nbsp $nbsp&nbsp $nbsp";echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['price'];?></option>
+                <?php }else{?>
+                <option value=<?php echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['id']?> ><?php echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['sub_category'];echo "&nbsp $nbsp&nbsp $nbsp&nbsp $nbsp";echo "Rs.";echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['price'];echo "/-"?></option>
+                <?php }?>
+        </optgroup>
+        </optgroup>
+        </optgroup>
 
-      <?php if($arr1[0]['category'][$x1]['sub_category_details'][$x2]['price'] == "On Inspection" || $arr1[0]['category'][$x1]['sub_category_details'][$x2]['price']=="Post Discussion"){?>  
-        <option value=<?php echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['id']?> ><?php echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['sub_category'];echo "&nbsp $nbsp&nbsp $nbsp&nbsp $nbsp";echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['price'];?></option>
-      <?php }else{?>
-        <option value=<?php echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['id']?> ><?php echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['sub_category'];echo "&nbsp $nbsp&nbsp $nbsp&nbsp $nbsp";echo "Rs.";echo $arr1[0]['category'][$x1]['sub_category_details'][$x2]['price'];echo "/-"?></option>
-      <?php }?>
+        
 
 
-
-<?php  }
+<?php  }}
 ?>
-                   
-                                  
-                            <?php  } 
-                            ?>
-                            </select>
+
+</select>
+
+<script src="jquery1.js"></script>
+<script src="jquery.multiselect.js"></script>
+<script>
+$('select[multiple]').multiselect({
+    columns: 1,
+    placeholder: 'Select options',
+});
+</script>
 
                         
 
